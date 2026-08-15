@@ -39,3 +39,6 @@ int main(){
 13	 
 14	    return 0;
 15	}
+  OUTPUT=10
+         30 20 20
+          2
