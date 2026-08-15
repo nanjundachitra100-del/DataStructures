@@ -23,3 +23,19 @@ int main(){
   printf("size of the char address %zu\n",sizeof(*r));
   return 0;
 }
+
+//3.program 3-(Based on the increment and decrement)
+#include <stdio.h>
+3	
+4	int main() {
+5	    int arr[] = {10, 20, 30, 40, 50,5};
+6	  
+7	    int *p,*q;
+8	    p=arr;
+9	    printf("%d\n",*p);
+10	    printf("%d %d %d\n",(*p)++,*p++,*++p);
+11	    q=p+3;
+12	    printf("%d",*q-3);
+13	 
+14	    return 0;
+15	}
