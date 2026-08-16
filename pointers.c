@@ -42,3 +42,32 @@ int main(){
   OUTPUT=10
          30 20 20
           2
+
+
+  //4.program-4[swap 2 numbers]
+  #include <stdio.h>
+
+void swap(int *a, int *b) {
+    int temp;
+
+    temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+int main() {
+    int x = 10, y = 20;
+
+    printf("Before: x = %d, y = %d\n", x, y);
+
+    swap(&x, &y);
+
+    printf("After: x = %d, y = %d\n", x, y);
+
+    return 0;
+}
+OUTPUT:a   = 100
+↑
+p   = address of a
+↑
+q   = address of p
