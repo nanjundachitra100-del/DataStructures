@@ -7,6 +7,9 @@ int main(){
     printf("%d\n",*(p-2));
     printf("%d\n",*p-2);
 
+    printf("%d ",*(p+2));
+    printf("%d ",*p+2);
+
     return 0;
 
 }
