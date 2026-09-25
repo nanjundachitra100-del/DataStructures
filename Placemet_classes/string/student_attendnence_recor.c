@@ -1,7 +1,7 @@
 #include<stdio.H>
 #include<string.h>
  int main(){
-    char a[100];
+    char s[100],n;
     printf("enter the string");
     scanf("%d",&s);
     int absentcount=0;
