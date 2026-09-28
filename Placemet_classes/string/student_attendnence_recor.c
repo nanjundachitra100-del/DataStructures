@@ -2,6 +2,7 @@
 #include<string.h>
  int main(){
     char s[100],n;
+    
     printf("enter the string");
     scanf("%d",&s);
     int absentcount=0;
