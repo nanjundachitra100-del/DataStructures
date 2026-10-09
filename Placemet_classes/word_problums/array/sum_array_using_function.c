@@ -58,4 +58,4 @@ int main(){
     output(total, avg);
 
     return 0;
-}
+}   
