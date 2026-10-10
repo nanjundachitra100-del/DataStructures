@@ -5,6 +5,7 @@ struct node {
 int data;
 struct node *nodenext;
 };
+q
 
 struct node *insertatbeginning(struct node *head, int value) {
 struct node *newnode;
