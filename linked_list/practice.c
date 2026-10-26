@@ -64,3 +64,16 @@ find maxindex(header *h){
     }
     return max;
 }
+
+find minindex(header *h){
+    node * temp=h->first;
+    int min=temp->data;
+    while(temp!=NULL){
+        if(temp->data<min){
+            min=temp->data;
+           
+        }
+        temp=temp->next;
+    }
+    return min;
+}
