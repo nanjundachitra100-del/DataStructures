@@ -51,3 +51,16 @@ return count;
 
 
 }
+//max 
+find maxindex(header *h){
+    node * temp=h->first;
+    int max=0;
+    while(temp!=NULL){
+        if(temp->data>max){
+            max=temp->data;
+           
+        }
+        temp=temp->next;
+    }
+    return max;
+}
