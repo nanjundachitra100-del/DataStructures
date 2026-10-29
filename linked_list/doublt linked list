@@ -1,0 +1,273 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Data node
+struct DNode {
+    struct DNode *prev;
+    int data;
+    struct DNode *next;
+};
+
+// Header node (list controller)
+struct HNode {
+    struct DNode *first;
+    struct DNode *last;
+    int count;
+};
+
+struct HNode* createList(void);
+struct DNode* createNode(int data);
+void insertAtFront(struct HNode *list, int data);
+void insertAtEnd(struct HNode *list, int data);
+void insertAtPosition(struct HNode *list, int pos, int data);
+void deleteFromFront(struct HNode *list);
+void deleteFromEnd(struct HNode *list);
+void deleteByValue(struct HNode *list, int value);
+void displayList(const struct HNode *list);
+void displayReverse(const struct HNode *list);
+void freeList(struct HNode **list);
+
+struct HNode* createList(void) {
+    struct HNode *list = (struct HNode *)malloc(sizeof(struct HNode));
+    if (list == NULL) {
+        fprintf(stderr, "Memory allocation failed for header.\n");
+        exit(1);
+    }
+    list->first = NULL;
+    list->last = NULL;
+    list->count = 0;
+    return list;
+}
+
+struct DNode* createNode(int data) {
+    struct DNode *newNode = (struct DNode *)malloc(sizeof(struct DNode));
+    if (newNode == NULL) {
+        fprintf(stderr, "Memory allocation failed for node.\n");
+        exit(1);
+    }
+    newNode->data = data;
+    newNode->prev = NULL;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void insertAtFront(struct HNode *list, int data) {
+    if (list == NULL) return;
+    struct DNode *newNode = createNode(data);
+    if (list->first == NULL) {
+        list->first = list->last = newNode;
+    } else {
+        newNode->next = list->first;
+        list->first->prev = newNode;
+        list->first = newNode;
+    }
+    list->count++;
+}
+
+void insertAtEnd(struct HNode *list, int data) {
+    if (list == NULL) return;
+    struct DNode *newNode = createNode(data);
+    if (list->last == NULL) {
+        list->first = list->last = newNode;
+    } else {
+        newNode->prev = list->last;
+        list->last->next = newNode;
+        list->last = newNode;
+    }
+    list->count++;
+}
+
+// Valid positions: 1 .. count+1
+void insertAtPosition(struct HNode *list, int pos, int data) {
+    if (list == NULL) return;
+    if (pos < 1 || pos > list->count + 1) {
+        printf("Invalid position %d! Valid range: 1 to %d\n", pos, list->count + 1);
+        return;
+    }
+    if (pos == 1) {
+        insertAtFront(list, data);
+        return;
+    }
+    if (pos == list->count + 1) {
+        insertAtEnd(list, data);
+        return;
+    }
+
+    // Middle insert (2 <= pos <= count): find the node at position pos-1,
+    // walking from whichever end is closer.
+    struct DNode *temp;
+    if (pos - 1 <= list->count / 2) {
+        temp = list->first;
+        for (int i = 1; i < pos - 1; i++)
+            temp = temp->next;
+    } else {
+        temp = list->last;
+        for (int i = list->count; i > pos - 1; i--)
+            temp = temp->prev;
+    }
+
+    struct DNode *newNode = createNode(data);
+    newNode->prev = temp;
+    newNode->next = temp->next;
+    temp->next->prev = newNode;
+    temp->next = newNode;
+    list->count++;
+}
+
+void deleteFromFront(struct HNode *list) {
+    if (list == NULL) return;
+    if (list->first == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+    struct DNode *temp = list->first;
+    list->first = temp->next;
+    if (list->first == NULL)
+        list->last = NULL;          // it was the only node
+    else
+        list->first->prev = NULL;
+    free(temp);
+    list->count--;
+}
+
+void deleteFromEnd(struct HNode *list) {
+    if (list == NULL) return;
+    if (list->last == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+    struct DNode *temp = list->last;
+    list->last = temp->prev;
+    if (list->last == NULL)
+        list->first = NULL;         // it was the only node
+    else
+        list->last->next = NULL;
+    free(temp);
+    list->count--;
+}
+
+// Deletes the first node holding 'value'; handles head, tail and middle uniformly
+void deleteByValue(struct HNode *list, int value) {
+    if (list == NULL) return;
+    if (list->first == NULL) {
+        printf("List is empty. Cannot delete %d.\n", value);
+        return;
+    }
+
+    struct DNode *temp = list->first;
+    while (temp != NULL && temp->data != value)
+        temp = temp->next;
+
+    if (temp == NULL) {
+        printf("Value %d not found.\n", value);
+        return;
+    }
+
+    if (temp->prev != NULL)
+        temp->prev->next = temp->next;
+    else
+        list->first = temp->next;
+
+    if (temp->next != NULL)
+        temp->next->prev = temp->prev;
+    else
+        list->last = temp->prev;
+
+    free(temp);
+    list->count--;
+    printf("Deleted node with value %d.\n", value);
+}
+
+void displayList(const struct HNode *list) {
+    if (list == NULL) return;
+    printf("[count=%d] ", list->count);
+    if (list->first == NULL) {
+        printf("(empty)\n");
+        return;
+    }
+    printf("NULL <-> ");
+    for (const struct DNode *t = list->first; t != NULL; t = t->next)
+        printf("%d <-> ", t->data);
+    printf("NULL\n");
+}
+
+// Walks backward via prev pointers to verify they are intact
+void displayReverse(const struct HNode *list) {
+    if (list == NULL) return;
+    printf("[reverse] ");
+    if (list->last == NULL) {
+        printf("(empty)\n");
+        return;
+    }
+    printf("NULL <-> ");
+    for (const struct DNode *t = list->last; t != NULL; t = t->prev)
+        printf("%d <-> ", t->data);
+    printf("NULL\n");
+}
+
+// Takes the address of the pointer so it can be reset to NULL
+void freeList(struct HNode **list) {
+    if (list == NULL || *list == NULL) return;
+    struct DNode *temp = (*list)->first;
+    while (temp != NULL) {
+        struct DNode *next = temp->next;
+        free(temp);
+        temp = next;
+    }
+    free(*list);
+    *list = NULL;
+}
+
+int main(void) {
+    struct HNode *list = createList();
+
+    // Empty-list edge cases
+    deleteFromFront(list);
+    deleteFromEnd(list);
+    deleteByValue(list, 1);
+    insertAtPosition(list, 0, 7);        // invalid
+    insertAtPosition(list, 2, 7);        // invalid (valid range is only 1)
+    displayList(list);
+
+    // Single-node cases
+    insertAtPosition(list, 1, 10);       // into empty list
+    displayList(list);
+    deleteFromEnd(list);                 // first and last must both become NULL
+    displayList(list);
+    insertAtEnd(list, 10);
+    deleteByValue(list, 10);             // delete only node by value
+    displayList(list);
+
+    // Build: 20 10 30 40
+    insertAtFront(list, 10);
+    insertAtFront(list, 20);
+    insertAtEnd(list, 30);
+    insertAtEnd(list, 40);
+    displayList(list);
+    displayReverse(list);
+
+    insertAtPosition(list, 2, 25);       // front half
+    insertAtPosition(list, 5, 35);       // back half
+    insertAtPosition(list, list->count + 1, 50);  // append
+    insertAtPosition(list, 99, 1);       // invalid
+    displayList(list);
+    displayReverse(list);
+
+    deleteByValue(list, 20);             // head
+    deleteByValue(list, 50);             // tail
+    deleteByValue(list, 10);             // middle
+    deleteByValue(list, 1000);           // missing
+    displayList(list);
+    displayReverse(list);
+
+    deleteFromFront(list);
+    deleteFromEnd(list);
+    displayList(list);
+
+    insertAtEnd(list, 99);               // proves last/first are still sane
+    displayList(list);
+
+    freeList(&list);
+    freeList(&list);                     // safe: list is already NULL
+    return 0;
+}
