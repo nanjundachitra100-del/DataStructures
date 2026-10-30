@@ -225,8 +225,8 @@ int main(void) {
     deleteFromFront(list);
     deleteFromEnd(list);
     deleteByValue(list, 1);
-    insertAtPosition(list, 0, 7);        // invalid
-    insertAtPosition(list, 2, 7);        // invalid (valid range is only 1)
+    insertAtPosition(list, 0, 7);       
+    insertAtPosition(list, 2, 7);      
     displayList(list);
 
     // Single-node cases
