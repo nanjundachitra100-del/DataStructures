@@ -1,3 +1,14 @@
+
+Write a C program to read 10 integers and 10 floating-point values into separate arrays.
+Using pointer arithmetic only, print each element along with its memory address;
+array indexing is not allowed. Implement safePrint(void *ptr, int type) to display a value based 
+on its type (0 for integer and 1 for float) and handle NULL pointers. In main(), allow the user to select the type,
+enter a corresponding value, and demonstrate safePrint() and NULL-pointer handling.
+    
+Constraints:
+-100000 ≤ Integer values ≤ 100000
+-100000.0 ≤ Floating-point values ≤ 100000.0
+
 #include <stdio.h>
 
 void safePrint(void *ptr, int type)
